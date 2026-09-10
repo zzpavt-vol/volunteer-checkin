@@ -6,7 +6,6 @@
 
   <title>志工活動打卡</title>
 
-  <!-- LINE LIFF SDK -->
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
   <style>
@@ -28,95 +27,61 @@
     }
 
     .container {
-      max-width: 600px;
+      max-width: 480px;
       margin: 0 auto;
-      padding: 24px 18px 40px;
-    }
-
-    .logo-area {
-      text-align: center;
-      padding: 30px 0 20px;
+      padding: 24px 20px 40px;
     }
 
     .logo {
-      width: 70px;
-      height: 70px;
-      margin: 0 auto 16px;
-      border-radius: 20px;
-      background: #06c755;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 34px;
+      text-align: center;
+      font-size: 42px;
+      margin-top: 30px;
+      margin-bottom: 10px;
     }
 
     h1 {
-      font-size: 25px;
+      text-align: center;
       margin: 0 0 8px;
-      color: #222;
+      font-size: 26px;
     }
 
     .subtitle {
+      text-align: center;
       color: #777;
-      font-size: 14px;
+      margin-bottom: 30px;
     }
 
     .card {
-      background: white;
+      background: #fff;
       border-radius: 16px;
-      padding: 22px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
     }
 
-    .card-title {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 16px;
-    }
-
-    .welcome {
+    .card h2 {
+      margin-top: 0;
       font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .activity-name {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
-
-    .info {
-      margin: 9px 0;
-      color: #555;
-      font-size: 15px;
-      line-height: 1.6;
-    }
-
-    .info strong {
-      color: #333;
     }
 
     button {
       width: 100%;
       border: none;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 16px;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 17px;
       cursor: pointer;
       margin-top: 10px;
     }
 
     .line-btn {
       background: #06c755;
-      color: white;
+      color: #fff;
     }
 
     .primary-btn {
       background: #333;
-      color: white;
+      color: #fff;
     }
 
     .secondary-btn {
@@ -125,16 +90,17 @@
     }
 
     button:disabled {
-      opacity: 0.5;
+      background: #ccc;
       cursor: not-allowed;
     }
 
     input {
       width: 100%;
-      padding: 13px;
+      padding: 13px 14px;
       border: 1px solid #ddd;
       border-radius: 10px;
       font-size: 16px;
+      margin-top: 8px;
       outline: none;
     }
 
@@ -142,86 +108,120 @@
       border-color: #888;
     }
 
-    .message {
-      text-align: center;
-      padding: 30px 15px;
-      color: #777;
-    }
-
-    .success {
-      text-align: center;
-      padding: 20px 0;
-    }
-
-    .success-icon {
-      font-size: 55px;
-      margin-bottom: 12px;
-    }
-
     .hidden {
       display: none !important;
     }
 
-    .loading {
-      text-align: center;
-      padding: 80px 20px;
-      color: #777;
+    .welcome {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
     }
 
-    .error {
-      background: #fff0f0;
-      color: #c62828;
-      padding: 14px;
+    .activity-card {
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 18px;
+      margin-top: 14px;
+    }
+
+    .activity-name {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .activity-info {
+      line-height: 1.8;
+      color: #555;
+      font-size: 15px;
+    }
+
+    .success {
+      text-align: center;
+    }
+
+    .success-icon {
+      font-size: 60px;
+      margin-bottom: 10px;
+    }
+
+    .success-title {
+      font-size: 25px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .message {
+      padding: 12px;
       border-radius: 10px;
       margin-bottom: 15px;
       line-height: 1.6;
-      font-size: 14px;
     }
 
-    .empty {
+    .error-message {
+      background: #fff0f0;
+      color: #c62828;
+    }
+
+    .info-message {
+      background: #f1f1f1;
+      color: #555;
+    }
+
+    .loading {
       text-align: center;
-      padding: 30px 10px;
-      color: #888;
+      color: #777;
+      padding: 30px 0;
+    }
+
+    .detail-row {
+      margin: 8px 0;
+    }
+
+    .detail-label {
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      color: #999;
+      font-size: 13px;
+      margin-top: 30px;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- 載入中 -->
-  <div id="loading" class="loading">
-    系統載入中...
-  </div>
+  <div class="container">
 
-  <!-- 主要內容 -->
-  <div id="app" class="container hidden">
-
-    <!-- 登入頁 -->
+    <!-- =========================
+         登入頁
+    ========================== -->
     <div id="loginPage">
 
-      <div class="logo-area">
-        <div class="logo">✓</div>
+      <div class="logo">🙋</div>
 
-        <h1>志工活動打卡</h1>
+      <h1>志工活動打卡</h1>
 
-        <div class="subtitle">
-          中正國中家長會志工團
-        </div>
+      <div class="subtitle">
+        中正國中家長會志工團
       </div>
 
       <div class="card">
 
-        <div class="card-title">
-          歡迎使用
-        </div>
+        <h2>歡迎使用</h2>
 
-        <p style="line-height:1.7;color:#666;">
-          使用 LINE 登入後，即可查看志工活動並進行活動打卡。
+        <p>
+          請使用 LINE 登入，即可進行志工活動打卡。
         </p>
 
         <button
+          id="loginBtn"
           class="line-btn"
-          onclick="loginWithLine()">
+          onclick="loginWithLine()"
+        >
           使用 LINE 登入
         </button>
 
@@ -230,36 +230,35 @@
     </div>
 
 
-    <!-- 首次登入姓名 -->
-    <div id="namePage" class="hidden">
+    <!-- =========================
+         姓名登記頁
+    ========================== -->
+    <div id="registerPage" class="hidden">
 
-      <div class="logo-area">
+      <div class="logo">👋</div>
 
-        <div class="logo">👋</div>
+      <h1>歡迎加入</h1>
 
-        <h1>歡迎加入</h1>
-
-        <div class="subtitle">
-          第一次使用，請先留下您的姓名
-        </div>
-
+      <div class="subtitle">
+        第一次使用，請先留下您的姓名
       </div>
 
       <div class="card">
 
-        <div class="card-title">
+        <label>
           志工姓名
-        </div>
+        </label>
 
         <input
           id="nameInput"
           type="text"
-          placeholder="請輸入您的姓名"
-          maxlength="30">
+          placeholder="請輸入姓名"
+        >
 
         <button
           class="primary-btn"
-          onclick="saveName()">
+          onclick="registerVolunteer()"
+        >
           確認
         </button>
 
@@ -268,103 +267,68 @@
     </div>
 
 
-    <!-- 首頁 -->
+    <!-- =========================
+         志工首頁
+    ========================== -->
     <div id="homePage" class="hidden">
 
-      <div class="card">
-
-        <div class="welcome">
-          👋 <span id="volunteerName"></span>，您好！
-        </div>
-
-        <div style="color:#777;font-size:14px;">
-          歡迎使用志工活動打卡系統
-        </div>
-
+      <div class="welcome">
+        👋 <span id="volunteerName"></span>，您好！
       </div>
 
-
-      <!-- 目前活動 -->
       <div class="card">
 
-        <div class="card-title">
-          📅 目前活動
-        </div>
+        <h2>📅 目前活動</h2>
 
         <div id="activityList">
-          <div class="message">
-            活動載入中...
+          <div class="loading">
+            活動資料載入中...
           </div>
         </div>
 
       </div>
 
+      <div class="card">
 
-      <button
-        class="secondary-btn"
-        onclick="logout()">
-        登出 LINE
-      </button>
+        <h2>📱 活動打卡</h2>
+
+        <p>
+          若您是透過活動 QR Code 進入，
+          系統會直接顯示該活動資訊。
+        </p>
+
+      </div>
 
     </div>
 
 
-    <!-- 活動詳細頁 -->
+    <!-- =========================
+         活動詳細頁
+    ========================== -->
     <div id="activityPage" class="hidden">
 
       <div class="card">
 
-        <div class="card-title">
-          活動資訊
-        </div>
+        <h2>📅 活動資訊</h2>
 
         <div id="activityDetail">
+          <div class="loading">
+            活動資料載入中...
+          </div>
         </div>
 
         <button
-          id="checkinButton"
+          id="checkInBtn"
           class="primary-btn"
-          onclick="checkIn()">
+          onclick="checkIn()"
+        >
           立即打卡
         </button>
 
         <button
           class="secondary-btn"
-          onclick="showHome()">
-          返回活動列表
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- 打卡結果 -->
-    <div id="resultPage" class="hidden">
-
-      <div class="card">
-
-        <div class="success">
-
-          <div
-            id="resultIcon"
-            class="success-icon">
-            ✅
-          </div>
-
-          <h2 id="resultTitle">
-            打卡成功
-          </h2>
-
-          <p id="resultMessage"
-             style="line-height:1.7;color:#666;">
-          </p>
-
-        </div>
-
-        <button
-          class="primary-btn"
-          onclick="showHome()">
+          onclick="showHome()"
+        >
           返回首頁
         </button>
 
@@ -373,626 +337,1301 @@
     </div>
 
 
+    <!-- =========================
+         打卡結果頁
+    ========================== -->
+    <div id="resultPage" class="hidden">
+
+      <div class="card success">
+
+        <div
+          id="resultIcon"
+          class="success-icon"
+        >
+          ✅
+        </div>
+
+        <div
+          id="resultTitle"
+          class="success-title"
+        >
+          打卡成功
+        </div>
+
+        <div
+          id="resultMessage"
+          class="message info-message"
+        >
+        </div>
+
+        <button
+          class="primary-btn"
+          onclick="showHome()"
+        >
+          返回首頁
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div
+      id="systemMessage"
+      class="hidden"
+    ></div>
+
+
+    <div class="footer">
+      中正國中家長會志工團
+    </div>
+
   </div>
 
 
 <script>
 
-  /************************************************
-   * 基本設定
-   ************************************************/
+/* =====================================================
+   系統設定
+===================================================== */
 
-  const LIFF_ID = "2011537657-PTc0Hdyd";
-
-  /*
-   * 你的 Apps Script Web App
-   */
-  const API_URL =
-    "https://script.google.com/macros/s/AKfycbxiW0E7rI6uOibUeJvYgSh52krA5iW0DoV1k62hzRQ7DgvmbCetbYmBztFkO8HJcfJN8w/exec";
+const LIFF_ID = "2011537657-PTc0Hdyd";
 
 
-  let lineProfile = null;
-  let volunteer = null;
-  let currentActivity = null;
+/*
+ * 注意：
+ * 這裡已經換成你剛剛確認的新版 Apps Script 網址
+ */
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbyE84f7zjXk1Jb35sl9X4U-DqfMpM8uKNzhsNRx-fbgab6hXkA40I8vV5W3Rmw1m4gtHg/exec";
 
 
-  /************************************************
-   * 啟動
-   ************************************************/
+/* =====================================================
+   全域變數
+===================================================== */
 
-  window.onload = async function () {
+let currentProfile = null;
 
-    try {
+let currentVolunteer = null;
 
-      await liff.init({
-        liffId: LIFF_ID
-      });
-
-      document
-        .getElementById("loading")
-        .classList.add("hidden");
-
-      document
-        .getElementById("app")
-        .classList.remove("hidden");
+let currentActivity = null;
 
 
-      /*
-       * 如果沒有登入 LINE
-       */
-      if (!liff.isLoggedIn()) {
+/* =====================================================
+   頁面初始化
+===================================================== */
 
-        showPage("loginPage");
+window.onload = async function() {
 
-        return;
-      }
+  try {
 
-
-      /*
-       * 取得 LINE 個人資料
-       */
-      lineProfile = await liff.getProfile();
+    await liff.init({
+      liffId: LIFF_ID
+    });
 
 
-      /*
-       * 從後端確認志工資料
-       */
-      await loadVolunteer();
+    /*
+     * 尚未登入
+     */
+    if (!liff.isLoggedIn()) {
 
+      showPage("loginPage");
 
-    } catch (error) {
-
-      console.error(error);
-
-      document.getElementById("loading").innerHTML =
-        "系統載入失敗<br><br>" +
-        "<small>" +
-        error.message +
-        "</small>";
+      return;
 
     }
 
-  };
+
+    /*
+     * 已經登入
+     */
+    await afterLogin();
 
 
-  /************************************************
-   * LINE 登入
-   ************************************************/
+  } catch (error) {
 
-  function loginWithLine() {
+    console.error("LIFF 初始化錯誤：", error);
+
+    showSystemError(
+      "系統載入失敗：" +
+      (error.message || error)
+    );
+
+  }
+
+};
+
+
+/* =====================================================
+   LINE 登入
+===================================================== */
+
+function loginWithLine() {
+
+  if (!liff.isLoggedIn()) {
 
     liff.login();
 
   }
 
-
-  /************************************************
-   * 顯示頁面
-   ************************************************/
-
-  function showPage(pageId) {
-
-    const pages = [
-      "loginPage",
-      "namePage",
-      "homePage",
-      "activityPage",
-      "resultPage"
-    ];
-
-    pages.forEach(function(id) {
-
-      document
-        .getElementById(id)
-        .classList.add("hidden");
-
-    });
+}
 
 
-    document
-      .getElementById(pageId)
-      .classList.remove("hidden");
+/* =====================================================
+   登入後處理
+===================================================== */
 
-  }
+async function afterLogin() {
 
+  try {
 
-  /************************************************
-   * 取得志工資料
-   ************************************************/
-
-  async function loadVolunteer() {
-
-    try {
-
-      const userId = lineProfile.userId;
-
-      const url =
-        API_URL +
-        "?action=getVolunteer" +
-        "&lineUserId=" +
-        encodeURIComponent(userId);
-
-      const response =
-        await fetch(url);
-
-      const data =
-        await response.json();
+    currentProfile =
+      await liff.getProfile();
 
 
-      if (data.success && data.volunteer) {
-
-        volunteer = data.volunteer;
-
-        document
-          .getElementById("volunteerName")
-          .textContent = volunteer.name;
-
-        await loadActivities();
-
-        showPage("homePage");
-
-      } else {
-
-        showPage("namePage");
-
-      }
+    console.log(
+      "LINE User ID：",
+      currentProfile.userId
+    );
 
 
-    } catch (error) {
-
-      console.error(error);
-
-      showError(
-        "無法取得志工資料，請稍後再試。"
+    /*
+     * 查詢志工資料
+     */
+    const result =
+      await apiGetVolunteer(
+        currentProfile.userId
       );
 
-    }
 
-  }
-
-
-  /************************************************
-   * 第一次登入：儲存姓名
-   ************************************************/
-
-  async function saveName() {
-
-    const name =
-      document
-        .getElementById("nameInput")
-        .value
-        .trim();
+    console.log(
+      "志工資料：",
+      result
+    );
 
 
-    if (!name) {
+    if (
+      result.success &&
+      result.volunteer
+    ) {
 
-      alert("請輸入姓名");
-
-      return;
-    }
-
-
-    try {
-
-      const url =
-        API_URL +
-        "?action=registerVolunteer" +
-        "&lineUserId=" +
-        encodeURIComponent(lineProfile.userId) +
-        "&name=" +
-        encodeURIComponent(name);
+      /*
+       * 已經登記過
+       */
+      currentVolunteer =
+        result.volunteer;
 
 
-      const response =
-        await fetch(url);
-
-
-      const data =
-        await response.json();
-
-
-      if (!data.success) {
-
-        alert(
-          data.message ||
-          "資料儲存失敗"
-        );
-
-        return;
-      }
-
-
-      volunteer = {
-        lineUserId: lineProfile.userId,
-        name: name
-      };
-
-
-      document
-        .getElementById("volunteerName")
-        .textContent = name;
-
-
-      await loadActivities();
-
-      showPage("homePage");
-
-
-    } catch (error) {
-
-      console.error(error);
-
-      alert(
-        "系統發生錯誤，請稍後再試。"
-      );
-
-    }
-
-  }
-
-
-  /************************************************
-   * 取得目前活動
-   ************************************************/
-
-  async function loadActivities() {
-
-    const container =
       document.getElementById(
-        "activityList"
+        "volunteerName"
+      ).textContent =
+        currentVolunteer.Name || "";
+
+
+      showHome();
+
+
+      /*
+       * 載入目前活動
+       */
+      await loadCurrentActivities();
+
+
+    } else {
+
+      /*
+       * 第一次使用
+       */
+      showPage("registerPage");
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      "取得志工資料錯誤：",
+      error
+    );
+
+
+    showSystemError(
+      "無法取得志工資料，請稍後再試。"
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   API：取得志工
+===================================================== */
+
+async function apiGetVolunteer(
+  lineUserId
+) {
+
+  const url =
+    API_URL +
+    "?action=getVolunteer" +
+    "&lineUserId=" +
+    encodeURIComponent(
+      lineUserId
+    );
+
+
+  const response =
+    await fetch(
+      url,
+      {
+        method: "GET"
+      }
+    );
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      "API HTTP 錯誤：" +
+      response.status
+    );
+
+  }
+
+
+  const data =
+    await response.json();
+
+
+  return data;
+
+}
+
+
+/* =====================================================
+   登記志工
+===================================================== */
+
+async function registerVolunteer() {
+
+  const nameInput =
+    document.getElementById(
+      "nameInput"
+    );
+
+
+  const name =
+    nameInput.value.trim();
+
+
+  if (!name) {
+
+    alert("請輸入姓名");
+
+    nameInput.focus();
+
+    return;
+
+  }
+
+
+  try {
+
+    const url =
+      API_URL +
+      "?action=registerVolunteer" +
+      "&lineUserId=" +
+      encodeURIComponent(
+        currentProfile.userId
+      ) +
+      "&name=" +
+      encodeURIComponent(
+        name
       );
 
 
-    container.innerHTML =
-      '<div class="message">活動載入中...</div>';
-
-
-    try {
-
-      const url =
-        API_URL +
-        "?action=getCurrentActivities";
-
-
-      const response =
-        await fetch(url);
-
-
-      const data =
-        await response.json();
-
-
-      if (
-        !data.success ||
-        !data.activities ||
-        data.activities.length === 0
-      ) {
-
-        container.innerHTML =
-          '<div class="empty">' +
-          '目前沒有開放中的活動' +
-          '</div>';
-
-        return;
-      }
-
-
-      container.innerHTML = "";
-
-
-      data.activities.forEach(
-        function(activity) {
-
-          const card =
-            document.createElement("div");
-
-          card.style.padding =
-            "16px 0";
-
-          card.style.borderBottom =
-            "1px solid #eee";
-
-
-          card.innerHTML = `
-
-            <div class="activity-name">
-              ${escapeHtml(activity.activityName)}
-            </div>
-
-            <div class="info">
-              📅 ${escapeHtml(activity.date || "")}
-            </div>
-
-            <div class="info">
-              ⏰
-              ${escapeHtml(activity.startTime || "")}
-              -
-              ${escapeHtml(activity.endTime || "")}
-            </div>
-
-            <div class="info">
-              📍 ${escapeHtml(activity.location || "")}
-            </div>
-
-            <button
-              class="primary-btn"
-              onclick='openActivity(${JSON.stringify(activity)})'>
-              查看活動
-            </button>
-
-          `;
-
-
-          container.appendChild(card);
-
+    const response =
+      await fetch(
+        url,
+        {
+          method: "GET"
         }
       );
 
 
-    } catch (error) {
+    if (!response.ok) {
 
-      console.error(error);
-
-      container.innerHTML =
-        '<div class="error">' +
-        '活動資料載入失敗，請稍後再試。' +
-        '</div>';
+      throw new Error(
+        "API HTTP 錯誤：" +
+        response.status
+      );
 
     }
 
+
+    const result =
+      await response.json();
+
+
+    console.log(
+      "登記結果：",
+      result
+    );
+
+
+    if (
+      !result.success
+    ) {
+
+      alert(
+        result.message ||
+        "登記失敗"
+      );
+
+      return;
+
+    }
+
+
+    currentVolunteer =
+      result.volunteer;
+
+
+    document.getElementById(
+      "volunteerName"
+    ).textContent =
+      currentVolunteer.Name || name;
+
+
+    showHome();
+
+
+    await loadCurrentActivities();
+
+
+  } catch (error) {
+
+    console.error(
+      "登記志工錯誤：",
+      error
+    );
+
+
+    alert(
+      "目前無法完成登記，請稍後再試。"
+    );
+
   }
 
-
-  /************************************************
-   * 查看活動
-   ************************************************/
-
-  function openActivity(activity) {
-
-    currentActivity = activity;
+}
 
 
-    const detail =
-      document.getElementById(
-        "activityDetail"
+/* =====================================================
+   載入目前活動
+===================================================== */
+
+async function loadCurrentActivities() {
+
+  const activityList =
+    document.getElementById(
+      "activityList"
+    );
+
+
+  activityList.innerHTML =
+    '<div class="loading">活動資料載入中...</div>';
+
+
+  try {
+
+    const url =
+      API_URL +
+      "?action=getCurrentActivities";
+
+
+    const response =
+      await fetch(
+        url,
+        {
+          method: "GET"
+        }
       );
 
 
-    detail.innerHTML = `
+    if (!response.ok) {
 
-      <div class="activity-name">
-        ${escapeHtml(activity.activityName)}
+      throw new Error(
+        "API HTTP 錯誤：" +
+        response.status
+      );
+
+    }
+
+
+    const result =
+      await response.json();
+
+
+    console.log(
+      "目前活動：",
+      result
+    );
+
+
+    if (
+      !result.success
+    ) {
+
+      throw new Error(
+        result.message ||
+        "取得活動失敗"
+      );
+
+    }
+
+
+    const activities =
+      result.activities || [];
+
+
+    if (
+      activities.length === 0
+    ) {
+
+      activityList.innerHTML =
+        '<div class="info-message">目前沒有開放中的活動。</div>';
+
+      return;
+
+    }
+
+
+    activityList.innerHTML = "";
+
+
+    activities.forEach(
+      function(activity) {
+
+        const card =
+          document.createElement(
+            "div"
+          );
+
+
+        card.className =
+          "activity-card";
+
+
+        card.innerHTML = `
+
+          <div class="activity-name">
+            ${escapeHtml(
+              activity.ActivityName
+            )}
+          </div>
+
+          <div class="activity-info">
+
+            📅 日期：
+            ${escapeHtml(
+              activity.Date || ""
+            )}
+
+            <br>
+
+            ⏰ 時間：
+            ${escapeHtml(
+              activity.StartTime || ""
+            )}
+            -
+            ${escapeHtml(
+              activity.EndTime || ""
+            )}
+
+            <br>
+
+            📍 地點：
+            ${escapeHtml(
+              activity.Location || ""
+            )}
+
+          </div>
+
+          <button
+            class="primary-btn"
+            onclick="openActivity('${encodeURIComponent(activity.ActivityID)}')"
+          >
+            查看活動
+          </button>
+
+        `;
+
+
+        activityList.appendChild(
+          card
+        );
+
+      }
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "取得活動錯誤：",
+      error
+    );
+
+
+    activityList.innerHTML =
+      '<div class="message error-message">目前無法取得活動資料，請稍後再試。</div>';
+
+  }
+
+}
+
+
+/* =====================================================
+   開啟活動
+===================================================== */
+
+async function openActivity(
+  encodedActivityId
+) {
+
+  const activityId =
+    decodeURIComponent(
+      encodedActivityId
+    );
+
+
+  await showActivity(
+    activityId
+  );
+
+}
+
+
+/* =====================================================
+   顯示活動
+===================================================== */
+
+async function showActivity(
+  activityId
+) {
+
+  showPage(
+    "activityPage"
+  );
+
+
+  const activityDetail =
+    document.getElementById(
+      "activityDetail"
+    );
+
+
+  activityDetail.innerHTML =
+    '<div class="loading">活動資料載入中...</div>';
+
+
+  try {
+
+    const url =
+      API_URL +
+      "?action=getActivity" +
+      "&activityId=" +
+      encodeURIComponent(
+        activityId
+      );
+
+
+    const response =
+      await fetch(
+        url,
+        {
+          method: "GET"
+        }
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "API HTTP 錯誤：" +
+        response.status
+      );
+
+    }
+
+
+    const result =
+      await response.json();
+
+
+    if (
+      !result.success ||
+      !result.activity
+    ) {
+
+      throw new Error(
+        result.message ||
+        "找不到活動"
+      );
+
+    }
+
+
+    currentActivity =
+      result.activity;
+
+
+    activityDetail.innerHTML = `
+
+      <div class="detail-row">
+        <span class="detail-label">
+          活動名稱：
+        </span>
+        ${escapeHtml(
+          currentActivity.ActivityName
+        )}
       </div>
 
-      <div class="info">
-        📅 <strong>日期：</strong>
-        ${escapeHtml(activity.date || "")}
+      <div class="detail-row">
+        <span class="detail-label">
+          日期：
+        </span>
+        ${escapeHtml(
+          currentActivity.Date || ""
+        )}
       </div>
 
-      <div class="info">
-        ⏰ <strong>時間：</strong>
-        ${escapeHtml(activity.startTime || "")}
+      <div class="detail-row">
+        <span class="detail-label">
+          時間：
+        </span>
+        ${escapeHtml(
+          currentActivity.StartTime || ""
+        )}
         -
-        ${escapeHtml(activity.endTime || "")}
+        ${escapeHtml(
+          currentActivity.EndTime || ""
+        )}
       </div>
 
-      <div class="info">
-        📍 <strong>地點：</strong>
-        ${escapeHtml(activity.location || "")}
+      <div class="detail-row">
+        <span class="detail-label">
+          地點：
+        </span>
+        ${escapeHtml(
+          currentActivity.Location || ""
+        )}
       </div>
 
-      <div class="info">
-        📝 <strong>活動說明：</strong><br>
-        ${escapeHtml(activity.description || "無")}
-      </div>
+      ${
+        currentActivity.Description
+          ? `
+            <div class="detail-row">
+              <span class="detail-label">
+                活動說明：
+              </span>
+              ${escapeHtml(
+                currentActivity.Description
+              )}
+            </div>
+          `
+          : ""
+      }
 
     `;
 
 
-    document
-      .getElementById("checkinButton")
-      .disabled = false;
+    /*
+     * 如果活動不是開放狀態
+     */
+    const status =
+      String(
+        currentActivity.Status || ""
+      ).toLowerCase();
 
 
-    showPage("activityPage");
+    const checkInBtn =
+      document.getElementById(
+        "checkInBtn"
+      );
+
+
+    if (
+      status !== "open" &&
+      status !== "active"
+    ) {
+
+      checkInBtn.disabled =
+        true;
+
+      checkInBtn.textContent =
+        "活動已結束";
+
+    } else {
+
+      checkInBtn.disabled =
+        false;
+
+      checkInBtn.textContent =
+        "立即打卡";
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      "取得活動錯誤：",
+      error
+    );
+
+
+    activityDetail.innerHTML =
+      '<div class="message error-message">找不到此活動。</div>';
+
+
+    document.getElementById(
+      "checkInBtn"
+    ).disabled =
+      true;
+
+  }
+
+}
+
+
+/* =====================================================
+   打卡
+===================================================== */
+
+async function checkIn() {
+
+  if (
+    !currentActivity
+  ) {
+
+    alert(
+      "目前沒有活動資料"
+    );
+
+    return;
 
   }
 
 
-  /************************************************
-   * 打卡
-   ************************************************/
+  if (
+    !currentProfile
+  ) {
 
-  async function checkIn() {
+    alert(
+      "請先使用 LINE 登入"
+    );
 
-    if (!currentActivity) {
+    return;
 
-      return;
-    }
+  }
 
 
-    const button =
-      document.getElementById(
-        "checkinButton"
+  const checkInBtn =
+    document.getElementById(
+      "checkInBtn"
+    );
+
+
+  checkInBtn.disabled =
+    true;
+
+
+  checkInBtn.textContent =
+    "打卡中...";
+
+
+  try {
+
+    const url =
+      API_URL +
+      "?action=checkIn" +
+      "&activityId=" +
+      encodeURIComponent(
+        currentActivity.ActivityID
+      ) +
+      "&lineUserId=" +
+      encodeURIComponent(
+        currentProfile.userId
       );
 
 
-    button.disabled = true;
-
-    button.textContent =
-      "打卡處理中...";
-
-
-    try {
-
-      const url =
-        API_URL +
-        "?action=checkIn" +
-        "&activityId=" +
-        encodeURIComponent(
-          currentActivity.activityId
-        ) +
-        "&lineUserId=" +
-        encodeURIComponent(
-          lineProfile.userId
-        );
+    const response =
+      await fetch(
+        url,
+        {
+          method: "GET"
+        }
+      );
 
 
-      const response =
-        await fetch(url);
+    if (!response.ok) {
+
+      throw new Error(
+        "API HTTP 錯誤：" +
+        response.status
+      );
+
+    }
 
 
-      const data =
-        await response.json();
+    const result =
+      await response.json();
 
 
-      if (data.success) {
-
-        showResult(
-          true,
-          "打卡成功",
-          "活動：" +
-          currentActivity.activityName +
-          "<br><br>" +
-          "打卡時間：" +
-          (data.checkInTime || "")
-        );
-
-      } else {
-
-        showResult(
-          false,
-          data.message ||
-          "目前無法完成打卡",
-          ""
-        );
-
-      }
+    console.log(
+      "打卡結果：",
+      result
+    );
 
 
-    } catch (error) {
-
-      console.error(error);
+    if (
+      result.success
+    ) {
 
       showResult(
-        false,
-        "系統發生錯誤",
-        "請稍後再試。"
+        "SUCCESS",
+        "打卡成功",
+        `
+          活動：${escapeHtml(
+            currentActivity.ActivityName
+          )}
+          <br>
+          打卡時間：
+          ${escapeHtml(
+            result.checkInTime || ""
+          )}
+        `
       );
+
+
+      return;
 
     }
 
 
-    button.disabled = false;
+    /*
+     * 已經打卡
+     */
+    if (
+      result.status ===
+      "ALREADY_CHECKED"
+    ) {
 
-    button.textContent =
+      showResult(
+        "ALREADY",
+        "已完成打卡",
+        `
+          您已完成此活動的打卡。
+          <br>
+          打卡時間：
+          ${escapeHtml(
+            result.checkInTime || ""
+          )}
+        `
+      );
+
+
+      return;
+
+    }
+
+
+    /*
+     * 活動已結束
+     */
+    if (
+      result.status ===
+      "CLOSED"
+    ) {
+
+      showResult(
+        "CLOSED",
+        "活動已結束",
+        result.message ||
+        "目前無法打卡"
+      );
+
+
+      return;
+
+    }
+
+
+    /*
+     * 找不到活動
+     */
+    if (
+      result.status ===
+      "NOT_FOUND"
+    ) {
+
+      showResult(
+        "ERROR",
+        "找不到活動",
+        result.message ||
+        "請確認活動 QR Code 是否正確"
+      );
+
+
+      return;
+
+    }
+
+
+    showResult(
+      "ERROR",
+      "打卡失敗",
+      result.message ||
+      "目前無法完成打卡"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "打卡錯誤：",
+      error
+    );
+
+
+    showResult(
+      "ERROR",
+      "系統發生錯誤",
+      "目前無法完成打卡，請稍後再試。"
+    );
+
+
+  } finally {
+
+    checkInBtn.disabled =
+      false;
+
+    checkInBtn.textContent =
       "立即打卡";
 
   }
 
+}
 
-  /************************************************
-   * 顯示結果
-   ************************************************/
 
-  function showResult(
-    success,
-    title,
-    message
+/* =====================================================
+   顯示打卡結果
+===================================================== */
+
+function showResult(
+  type,
+  title,
+  message
+) {
+
+  const icon =
+    document.getElementById(
+      "resultIcon"
+    );
+
+
+  const resultTitle =
+    document.getElementById(
+      "resultTitle"
+    );
+
+
+  const resultMessage =
+    document.getElementById(
+      "resultMessage"
+    );
+
+
+  if (
+    type === "SUCCESS"
   ) {
 
-    document
-      .getElementById("resultIcon")
-      .textContent =
-      success ? "✅" : "⚠️";
+    icon.textContent =
+      "✅";
 
+  } else if (
+    type === "ALREADY"
+  ) {
 
-    document
-      .getElementById("resultTitle")
-      .textContent =
-      title;
+    icon.textContent =
+      "⚠️";
 
+  } else if (
+    type === "CLOSED"
+  ) {
 
-    document
-      .getElementById("resultMessage")
-      .innerHTML =
-      message;
+    icon.textContent =
+      "⚠️";
 
+  } else {
 
-    showPage("resultPage");
-
-  }
-
-
-  /************************************************
-   * 回首頁
-   ************************************************/
-
-  function showHome() {
-
-    loadActivities();
-
-    showPage("homePage");
+    icon.textContent =
+      "❌";
 
   }
 
 
-  /************************************************
-   * 登出
-   ************************************************/
+  resultTitle.textContent =
+    title;
 
-  function logout() {
 
-    if (liff.isLoggedIn()) {
+  resultMessage.innerHTML =
+    message;
 
-      liff.logout();
+
+  showPage(
+    "resultPage"
+  );
+
+}
+
+
+/* =====================================================
+   返回首頁
+===================================================== */
+
+function showHome() {
+
+  showPage(
+    "homePage"
+  );
+
+}
+
+
+/* =====================================================
+   顯示指定頁面
+===================================================== */
+
+function showPage(
+  pageId
+) {
+
+  const pages = [
+    "loginPage",
+    "registerPage",
+    "homePage",
+    "activityPage",
+    "resultPage"
+  ];
+
+
+  pages.forEach(
+    function(id) {
+
+      const page =
+        document.getElementById(
+          id
+        );
+
+
+      if (id === pageId) {
+
+        page.classList.remove(
+          "hidden"
+        );
+
+      } else {
+
+        page.classList.add(
+          "hidden"
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   顯示系統錯誤
+===================================================== */
+
+function showSystemError(
+  message
+) {
+
+  showPage(
+    "loginPage"
+  );
+
+
+  const oldMessage =
+    document.getElementById(
+      "systemMessage"
+    );
+
+
+  oldMessage.className =
+    "message error-message";
+
+
+  oldMessage.textContent =
+    message;
+
+
+  oldMessage.classList.remove(
+    "hidden"
+  );
+
+
+  const loginPage =
+    document.getElementById(
+      "loginPage"
+    );
+
+
+  loginPage.prepend(
+    oldMessage
+  );
+
+}
+
+
+/* =====================================================
+   HTML 安全處理
+===================================================== */
+
+function escapeHtml(
+  value
+) {
+
+  if (
+    value === null ||
+    value === undefined
+  ) {
+
+    return "";
+
+  }
+
+
+  return String(value)
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =====================================================
+   如果網址帶有 activityId
+   代表是掃描活動 QR Code 進來
+===================================================== */
+
+async function checkActivityFromUrl() {
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  const activityId =
+    params.get(
+      "activityId"
+    );
+
+
+  if (
+    !activityId
+  ) {
+
+    return;
+
+  }
+
+
+  /*
+   * 如果已經登入，
+   * 直接開啟活動
+   */
+  if (
+    liff.isLoggedIn()
+  ) {
+
+    await showActivity(
+      activityId
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   登入完成後檢查 QR Code 活動
+===================================================== */
+
+const originalAfterLogin =
+  afterLogin;
+
+
+/*
+ * 重新包裝登入後流程
+ */
+afterLogin =
+  async function() {
+
+    await originalAfterLogin();
+
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+
+    const activityId =
+      params.get(
+        "activityId"
+      );
+
+
+    if (
+      activityId &&
+      currentVolunteer
+    ) {
+
+      await showActivity(
+        activityId
+      );
 
     }
 
-    location.reload();
+  };
 
-  }
-
-
-  /************************************************
-   * 錯誤訊息
-   ************************************************/
-
-  function showError(message) {
-
-    document.getElementById("app").innerHTML = `
-
-      <div class="error">
-        ${escapeHtml(message)}
-      </div>
-
-    `;
-
-  }
-
-
-  /************************************************
-   * 防止 HTML 注入
-   ************************************************/
-
-  function escapeHtml(value) {
-
-    if (value === null ||
-        value === undefined) {
-
-      return "";
-
-    }
-
-
-    return String(value)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-
-  }
 
 </script>
 
