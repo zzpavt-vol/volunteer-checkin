@@ -112,6 +112,11 @@
       color: white;
     }
 
+    .btn-complete {
+      background: #777;
+      color: white;
+    }
+
     input,
     textarea,
     select {
@@ -360,6 +365,22 @@
       text-align: center;
     }
 
+    .attendance-box {
+      margin-top: 15px;
+    }
+
+    .attendance-detail {
+      background: #f7f8fa;
+      border-radius: 12px;
+      padding: 15px;
+      line-height: 1.9;
+      margin-bottom: 12px;
+    }
+
+    .attendance-detail strong {
+      font-size: 18px;
+    }
+
   </style>
 
 </head>
@@ -370,7 +391,9 @@
 <div class="container">
 
 
-  <!-- 登入 -->
+  <!-- =========================
+       登入
+  ========================== -->
 
   <div id="loginPage">
 
@@ -399,7 +422,9 @@
   </div>
 
 
-  <!-- 第一次註冊 -->
+  <!-- =========================
+       第一次註冊
+  ========================== -->
 
   <div id="registerPage" class="hidden">
 
@@ -435,7 +460,9 @@
   </div>
 
 
-  <!-- 首頁 -->
+  <!-- =========================
+       首頁
+  ========================== -->
 
   <div id="homePage" class="hidden">
 
@@ -492,7 +519,9 @@
   </div>
 
 
-  <!-- 活動頁 -->
+  <!-- =========================
+       活動頁
+  ========================== -->
 
   <div id="activityPage" class="hidden">
 
@@ -537,7 +566,14 @@
 
       </div>
 
-      <div id="activityMessage"></div>
+      <div
+        id="activityMessage">
+      </div>
+
+      <div
+        id="attendanceDetail"
+        class="attendance-box">
+      </div>
 
       <button
         id="checkInButton"
@@ -553,7 +589,9 @@
   </div>
 
 
-  <!-- 結果 -->
+  <!-- =========================
+       結果
+  ========================== -->
 
   <div id="resultPage" class="hidden">
 
@@ -589,7 +627,9 @@
   </div>
 
 
-  <!-- 管理員頁 -->
+  <!-- =========================
+       管理員頁
+  ========================== -->
 
   <div id="adminPage" class="hidden">
 
@@ -896,7 +936,8 @@ const LIFF_ID =
   "2011537657-PTc0Hdyd";
 
 const API_URL =
-  "https://script.google.com/macros/s/AKfycbyE84f7zjXk1Jb35sl9X4U-DqfMpM8uKNzhsNRx-fbgab6hXkA40I8vV5W3Rmw1m4gtHg/exec";
+  "https://script.google.com/macros/s/AKfycbyE84f7zXk1Jb35sl9X4U-DqfMpM8uKNzhsNRx-fbgab6hXkA40I8vV5W3Rmw1m4gtHg/exec";
+
 
 let lineUserId = "";
 let lineDisplayName = "";
@@ -923,6 +964,7 @@ async function init() {
       showPage("loginPage");
 
       return;
+
     }
 
     const profile =
@@ -1327,9 +1369,9 @@ async function openActivity(
         currentActivity.Description ||
         "無";
 
-    await refreshAttendanceButton();
-
     showPage("activityPage");
+
+    await refreshAttendanceButton();
 
   }
 
@@ -1348,7 +1390,7 @@ async function openActivity(
 
 
 /* =====================================================
-   判斷志工目前打卡狀態
+   判斷本人打卡／簽退狀態
 ===================================================== */
 
 async function refreshAttendanceButton() {
@@ -1363,74 +1405,239 @@ async function refreshAttendanceButton() {
       "activityMessage"
     );
 
-  button.disabled = false;
+  const detail =
+    document.getElementById(
+      "attendanceDetail"
+    );
+
+  button.disabled = true;
 
   button.className =
     "btn-primary";
 
   button.textContent =
-    "立即打卡";
+    "資料載入中...";
 
   message.innerHTML = "";
+
+  detail.innerHTML = "";
+
+  currentAttendance = null;
+
 
   try {
 
     const data =
       await callAPI(
-        "getActivityCheckIns",
+        "getMyAttendance",
         {
-          operatorId:
-            lineUserId,
           activityId:
-            currentActivity.ActivityID
+            currentActivity.ActivityID,
+
+          lineUserId:
+            lineUserId
         }
       );
 
-    /*
-      志工不是管理員時，
-      上面的 API 會被拒絕。
-      因此一般志工不使用這裡判斷。
-    */
+    currentAttendance =
+      data;
 
-    currentAttendance = null;
+
+    /* -----------------------------------------
+       尚未打卡
+    ----------------------------------------- */
+
+    if (
+      data.status ===
+      "NOT_CHECKED"
+    ) {
+
+      detail.innerHTML =
+        '<div class="info message">' +
+        '目前尚未打卡' +
+        '</div>';
+
+      const activityStatus =
+        String(
+          currentActivity.Status || ""
+        ).toLowerCase();
+
+      if (
+        activityStatus === "open" ||
+        activityStatus === "active"
+      ) {
+
+        button.disabled = false;
+
+        button.className =
+          "btn-primary";
+
+        button.textContent =
+          "立即打卡";
+
+      }
+
+      else {
+
+        button.disabled = true;
+
+        button.className =
+          "btn-secondary";
+
+        button.textContent =
+          "活動已關閉";
+
+        message.innerHTML =
+          '<div class="warning message">' +
+          '⚠️ 此活動已關閉，目前無法進行新的打卡。' +
+          '</div>';
+
+      }
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------
+       已打卡、尚未簽退
+    ----------------------------------------- */
+
+    if (
+      data.status ===
+      "ALREADY_CHECKED"
+    ) {
+
+      detail.innerHTML =
+
+        '<div class="attendance-detail">' +
+
+        '<strong>🟡 已完成打卡</strong>' +
+
+        '<br>' +
+
+        '打卡時間：' +
+        escapeHTML(
+          data.checkInTime ||
+          "-"
+        ) +
+
+        '<br>' +
+
+        '<span class="small">' +
+        '完成服務後請按「立即簽退」' +
+        '</span>' +
+
+        '</div>';
+
+      button.disabled = false;
+
+      button.className =
+        "btn-orange";
+
+      button.textContent =
+        "立即簽退";
+
+      message.innerHTML =
+        '<div class="info message">' +
+        '您已經完成打卡，離開活動時請記得簽退。' +
+        '</div>';
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------
+       已完成簽退
+    ----------------------------------------- */
+
+    if (
+      data.status ===
+      "COMPLETED"
+    ) {
+
+      detail.innerHTML =
+
+        '<div class="attendance-detail">' +
+
+        '<strong>✅ 本次服務已完成</strong>' +
+
+        '<br>' +
+
+        '打卡時間：' +
+        escapeHTML(
+          data.checkInTime ||
+          "-"
+        ) +
+
+        '<br>' +
+
+        '簽退時間：' +
+        escapeHTML(
+          data.checkOutTime ||
+          "-"
+        ) +
+
+        '<br>' +
+
+        '<strong>服務時數：' +
+        escapeHTML(
+          data.hours
+        ) +
+        ' 小時</strong>' +
+
+        '</div>';
+
+      button.disabled = true;
+
+      button.className =
+        "btn-complete";
+
+      button.textContent =
+        "✅ 已完成服務";
+
+      message.innerHTML =
+        '<div class="success message">' +
+        '本次活動的志工服務紀錄已完成。' +
+        '</div>';
+
+      return;
+
+    }
+
+
+    /* -----------------------------------------
+       預設
+    ----------------------------------------- */
+
+    button.disabled = false;
+
+    button.className =
+      "btn-primary";
+
+    button.textContent =
+      "立即打卡";
 
   }
 
   catch (error) {
 
-    /*
-      一般志工不能取得完整打卡清單，
-      因此不在這裡顯示錯誤。
-    */
-
-  }
-
-  const status =
-    String(
-      currentActivity.Status || ""
-    )
-    .toLowerCase();
-
-  if (
-    status !== "open" &&
-    status !== "active"
-  ) {
+    console.error(error);
 
     button.disabled = true;
 
+    button.textContent =
+      "無法取得狀態";
+
     message.innerHTML =
-      '<div class="warning message">' +
-      '⚠️ 活動已關閉，目前無法進行新的打卡。' +
+      '<div class="error message">' +
+      escapeHTML(
+        error.message
+      ) +
       '</div>';
 
-    return;
-
   }
-
-  /*
-    這裡讓後端決定打卡或簽退。
-    先顯示打卡。
-  */
 
 }
 
@@ -1459,7 +1666,7 @@ async function checkIn() {
   button.disabled = true;
 
   button.textContent =
-    "處理中...";
+    "打卡中...";
 
   try {
 
@@ -1484,34 +1691,36 @@ async function checkIn() {
         }
       );
 
+
     if (data.success) {
 
       showResult(
         "SUCCESS",
         "打卡成功",
-        data.message,
+        data.message ||
+        "已成功完成打卡。",
         "打卡時間：" +
         data.checkInTime
       );
 
+      return;
+
     }
 
-    else if (
+
+    if (
       data.status ===
       "ALREADY_CHECKED"
     ) {
 
-      showResult(
-        "INFO",
-        "已完成打卡",
-        data.message,
-        "打卡時間：" +
-        data.checkInTime
-      );
+      await refreshAttendanceButton();
+
+      return;
 
     }
 
-    else if (
+
+    if (
       data.status ===
       "COMPLETED"
     ) {
@@ -1519,15 +1728,19 @@ async function checkIn() {
       showResult(
         "INFO",
         "本次活動已完成",
-        data.message,
+        data.message ||
+        "此活動已完成簽退。",
         "服務時數：" +
         data.hours +
         " 小時"
       );
 
+      return;
+
     }
 
-    else if (
+
+    if (
       data.status ===
       "CLOSED"
     ) {
@@ -1535,23 +1748,23 @@ async function checkIn() {
       showResult(
         "CLOSED",
         "活動已關閉",
-        data.message,
-        ""
-      );
-
-    }
-
-    else {
-
-      showResult(
-        "ERROR",
-        "打卡失敗",
         data.message ||
-        "目前無法完成打卡",
+        "目前無法進行新的打卡。",
         ""
       );
 
+      return;
+
     }
+
+
+    showResult(
+      "ERROR",
+      "打卡失敗",
+      data.message ||
+      "目前無法完成打卡。",
+      ""
+    );
 
   }
 
@@ -1570,9 +1783,6 @@ async function checkIn() {
 
     button.disabled = false;
 
-    button.textContent =
-      "立即打卡";
-
   }
 
 }
@@ -1585,8 +1795,13 @@ async function checkIn() {
 async function checkOut() {
 
   if (!currentActivity) {
-    alert("找不到目前活動");
+
+    alert(
+      "找不到目前活動"
+    );
+
     return;
+
   }
 
   const button =
@@ -1613,30 +1828,61 @@ async function checkOut() {
         }
       );
 
+
     if (data.success) {
 
       showResult(
         "SUCCESS",
         "簽退成功",
-        data.message,
+        data.message ||
+        "已成功完成簽退。",
         "服務時數：" +
         data.hours +
         " 小時"
       );
 
+      return;
+
     }
 
-    else {
+
+    if (
+      data.status ===
+      "ALREADY_CHECKED_OUT"
+    ) {
+
+      await refreshAttendanceButton();
+
+      return;
+
+    }
+
+
+    if (
+      data.status ===
+      "NOT_CHECKED_IN"
+    ) {
 
       showResult(
         "ERROR",
-        "簽退失敗",
+        "尚未打卡",
         data.message ||
-        "目前無法簽退",
+        "目前沒有找到打卡紀錄。",
         ""
       );
 
+      return;
+
     }
+
+
+    showResult(
+      "ERROR",
+      "簽退失敗",
+      data.message ||
+      "目前無法完成簽退。",
+      ""
+    );
 
   }
 
@@ -1655,35 +1901,36 @@ async function checkOut() {
 
     button.disabled = false;
 
-    button.textContent =
-      "簽退";
-
   }
 
 }
 
 
 /* =====================================================
-   目前版本先以按鈕切換
+   打卡／簽退主按鈕
 ===================================================== */
 
 async function handleAttendanceAction() {
 
-  /*
-    先嘗試打卡。
+  if (!currentActivity) {
 
-    如果已經打過卡，
-    後端會回傳 ALREADY_CHECKED。
-    此時我們把按鈕改成簽退，
-    使用者再按一次即可簽退。
+    alert(
+      "找不到目前活動"
+    );
+
+    return;
+
+  }
+
+
+  /*
+    不再重新猜測狀態。
+    直接依照目前畫面上的 currentAttendance 判斷。
   */
 
-  const data =
-    await silentCheckAttendance();
-
   if (
-    data &&
-    data.status ===
+    currentAttendance &&
+    currentAttendance.status ===
     "ALREADY_CHECKED"
   ) {
 
@@ -1693,66 +1940,25 @@ async function handleAttendanceAction() {
 
   }
 
+
   if (
-    data &&
-    data.status ===
+    currentAttendance &&
+    currentAttendance.status ===
     "COMPLETED"
   ) {
-
-    showResult(
-      "INFO",
-      "本次活動已完成",
-      data.message,
-      "服務時數：" +
-      data.hours +
-      " 小時"
-    );
 
     return;
 
   }
+
 
   await checkIn();
 
 }
 
 
-/*
-  查詢目前活動的本人打卡狀態。
-
-  後端另外提供 getMyAttendance。
-*/
-
-async function silentCheckAttendance() {
-
-  try {
-
-    return await callAPI(
-      "getMyAttendance",
-      {
-        activityId:
-          currentActivity.ActivityID,
-
-        lineUserId:
-          lineUserId
-      }
-    );
-
-  }
-
-  catch (error) {
-
-    console.error(error);
-
-    return null;
-
-  }
-
-}
-
-
 /* =====================================================
-   打卡結果
+   結果
 ===================================================== */
 
 function showResult(
@@ -1909,31 +2115,34 @@ function showAdminSection(section) {
     "stats"
   ];
 
-  sections.forEach(function(item) {
+  sections.forEach(
+    function(item) {
 
-    const element =
-      document.getElementById(
-        "adminSection" +
-        capitalize(item)
-      );
+      const element =
+        document.getElementById(
+          "adminSection" +
+          capitalize(item)
+        );
 
-    if (item === section) {
+      if (item === section) {
 
-      element.classList.remove(
-        "hidden"
-      );
+        element.classList.remove(
+          "hidden"
+        );
+
+      }
+
+      else {
+
+        element.classList.add(
+          "hidden"
+        );
+
+      }
 
     }
+  );
 
-    else {
-
-      element.classList.add(
-        "hidden"
-      );
-
-    }
-
-  });
 
   if (section === "admins") {
 
@@ -2343,9 +2552,6 @@ async function loadAdminActivities() {
           ).toLowerCase() ===
           "open";
 
-        const qrUrl =
-          activity.QR_URL || "";
-
         item.innerHTML =
 
           '<div class="activity-name">' +
@@ -2355,11 +2561,13 @@ async function loadAdminActivities() {
           '</div>' +
 
           '<div>' +
+
           (
             open
               ? '<span class="status-open">開放中</span>'
               : '<span class="status-closed">已關閉</span>'
           ) +
+
           '</div>' +
 
           '<div class="activity-info">' +
@@ -2389,6 +2597,7 @@ async function loadAdminActivities() {
 
           '</div>';
 
+
         const actionArea =
           document.createElement(
             "div"
@@ -2396,6 +2605,9 @@ async function loadAdminActivities() {
 
         actionArea.className =
           "activity-admin-actions";
+
+
+        /* 編輯 */
 
         const editButton =
           document.createElement(
@@ -2420,6 +2632,8 @@ async function loadAdminActivities() {
         );
 
 
+        /* QR Code */
+
         const qrButton =
           document.createElement(
             "button"
@@ -2442,6 +2656,8 @@ async function loadAdminActivities() {
           qrButton
         );
 
+
+        /* 開啟／關閉 */
 
         const statusButton =
           document.createElement(
@@ -2557,6 +2773,7 @@ async function saveActivity() {
 
   };
 
+
   if (!data.ActivityName) {
 
     alert("請輸入活動名稱");
@@ -2588,6 +2805,7 @@ async function saveActivity() {
     return;
 
   }
+
 
   try {
 
@@ -2843,6 +3061,7 @@ async function toggleActivityStatus(
     return;
   }
 
+
   try {
 
     const data =
@@ -2900,17 +3119,20 @@ function showQRCode(activity) {
 
   }
 
+
   const qrImage =
     "https://quickchart.io/qr?size=300&text=" +
     encodeURIComponent(
       qrUrl
     );
 
+
   const popup =
     window.open(
       "",
       "_blank"
     );
+
 
   if (!popup) {
 
@@ -2922,41 +3144,63 @@ function showQRCode(activity) {
 
   }
 
+
   popup.document.write(
+
     '<!DOCTYPE html>' +
+
     '<html lang="zh-Hant">' +
+
     '<head>' +
+
     '<meta charset="UTF-8">' +
+
     '<title>' +
+
     escapeHTML(
       activity.ActivityName
     ) +
+
     '</title>' +
+
     '<style>' +
+
     'body{text-align:center;font-family:Arial;padding:30px;}' +
+
     'img{max-width:90%;width:300px;}' +
+
     '</style>' +
+
     '</head>' +
+
     '<body>' +
+
     '<h2>' +
+
     escapeHTML(
       activity.ActivityName
     ) +
+
     '</h2>' +
+
     '<img src="' +
     qrImage +
     '">' +
+
     '<p>' +
     escapeHTML(
       activity.Date
     ) +
     '</p>' +
+
     '<p>' +
     escapeHTML(
       activity.Location
     ) +
     '</p>' +
+
     '</body>' +
+
     '</html>'
   );
 
@@ -2979,6 +3223,7 @@ async function loadCheckinActivityOptions() {
   select.innerHTML =
     '<option value="">活動載入中...</option>';
 
+
   try {
 
     const data =
@@ -2992,6 +3237,7 @@ async function loadCheckinActivityOptions() {
 
     select.innerHTML =
       '<option value="">請選擇活動</option>';
+
 
     data.activities.forEach(
       function(activity) {
@@ -3042,6 +3288,7 @@ async function loadActivityCheckIns() {
       "checkinList"
     );
 
+
   if (!activityId) {
 
     box.innerHTML =
@@ -3053,10 +3300,12 @@ async function loadActivityCheckIns() {
 
   }
 
+
   box.innerHTML =
     '<div class="loading">' +
     '資料載入中...' +
     '</div>';
+
 
   try {
 
@@ -3072,6 +3321,7 @@ async function loadActivityCheckIns() {
         }
       );
 
+
     if (
       !data.checkIns ||
       data.checkIns.length === 0
@@ -3086,23 +3336,33 @@ async function loadActivityCheckIns() {
 
     }
 
+
     let html =
       '<div class="table-wrapper">' +
+
       '<table>' +
+
       '<thead>' +
+
       '<tr>' +
+
       '<th>志工</th>' +
       '<th>打卡</th>' +
       '<th>簽退</th>' +
       '<th>時數</th>' +
+
       '</tr>' +
+
       '</thead>' +
+
       '<tbody>';
+
 
     data.checkIns.forEach(
       function(item) {
 
         html +=
+
           '<tr>' +
 
           '<td>' +
@@ -3126,12 +3386,14 @@ async function loadActivityCheckIns() {
           '</td>' +
 
           '<td>' +
+
           escapeHTML(
             item.Hours !== undefined &&
             item.Hours !== ""
               ? item.Hours + " 小時"
               : "-"
           ) +
+
           '</td>' +
 
           '</tr>';
@@ -3139,10 +3401,13 @@ async function loadActivityCheckIns() {
       }
     );
 
+
     html +=
+
       '</tbody>' +
       '</table>' +
       '</div>';
+
 
     box.innerHTML =
       html;
@@ -3179,6 +3444,7 @@ async function loadVolunteerStats() {
     '統計資料載入中...' +
     '</div>';
 
+
   try {
 
     const data =
@@ -3189,6 +3455,7 @@ async function loadVolunteerStats() {
             lineUserId
         }
       );
+
 
     if (
       !data.stats ||
@@ -3204,7 +3471,9 @@ async function loadVolunteerStats() {
 
     }
 
+
     let totalHours = 0;
+
 
     data.stats.forEach(
       function(item) {
@@ -3217,47 +3486,71 @@ async function loadVolunteerStats() {
       }
     );
 
+
     totalHours =
       Math.round(
         totalHours * 100
       ) / 100;
+
 
     let html =
 
       '<div class="stats-grid">' +
 
       '<div class="stat-card">' +
+
       '<div class="stat-number">' +
       data.stats.length +
       '</div>' +
-      '<div class="stat-label">志工人數</div>' +
+
+      '<div class="stat-label">' +
+      '志工人數' +
       '</div>' +
 
+      '</div>' +
+
+
       '<div class="stat-card">' +
+
       '<div class="stat-number">' +
       totalHours +
       '</div>' +
-      '<div class="stat-label">總服務時數</div>' +
+
+      '<div class="stat-label">' +
+      '總服務時數' +
+      '</div>' +
+
       '</div>' +
 
       '</div>';
 
+
     html +=
+
       '<div class="table-wrapper">' +
+
       '<table>' +
+
       '<thead>' +
+
       '<tr>' +
+
       '<th>志工</th>' +
       '<th>活動場次</th>' +
       '<th>累計時數</th>' +
+
       '</tr>' +
+
       '</thead>' +
+
       '<tbody>';
+
 
     data.stats.forEach(
       function(item) {
 
         html +=
+
           '<tr>' +
 
           '<td>' +
@@ -3283,10 +3576,13 @@ async function loadVolunteerStats() {
       }
     );
 
+
     html +=
+
       '</tbody>' +
       '</table>' +
       '</div>';
+
 
     box.innerHTML =
       html;
@@ -3319,10 +3615,12 @@ async function callAPI(
   const query =
     new URLSearchParams();
 
+
   query.append(
     "action",
     action
   );
+
 
   Object.keys(params).forEach(
     function(key) {
@@ -3342,12 +3640,14 @@ async function callAPI(
     }
   );
 
+
   const response =
     await fetch(
       API_URL +
       "?" +
       query.toString()
     );
+
 
   if (!response.ok) {
 
@@ -3358,25 +3658,37 @@ async function callAPI(
 
   }
 
+
   const data =
     await response.json();
+
+
+  /*
+    只有真正的 API 錯誤才 throw。
+    ALREADY_CHECKED、
+    COMPLETED、
+    CLOSED 等狀態屬於正常流程。
+  */
 
   if (
     data.success === false &&
     data.message
   ) {
 
-    /*
-      這裡不能全部直接 throw，
-      因為打卡 API 有 ALREADY_CHECKED
-      等正常狀態需要前端處理。
-    */
+    const normalStatuses = [
+      "ALREADY_CHECKED",
+      "COMPLETED",
+      "CLOSED",
+      "NOT_CHECKED_IN",
+      "NOT_CHECKED",
+      "ALREADY_CHECKED_OUT"
+    ];
+
 
     if (
-      data.status !== "ALREADY_CHECKED" &&
-      data.status !== "COMPLETED" &&
-      data.status !== "CLOSED" &&
-      data.status !== "NOT_CHECKED_IN"
+      !normalStatuses.includes(
+        data.status
+      )
     ) {
 
       throw new Error(
@@ -3386,6 +3698,7 @@ async function callAPI(
     }
 
   }
+
 
   return data;
 
@@ -3407,15 +3720,18 @@ function showPage(pageId) {
     "adminPage"
   ];
 
+
   pages.forEach(
     function(id) {
 
       const page =
         document.getElementById(id);
 
+
       if (!page) {
         return;
       }
+
 
       if (id === pageId) {
 
@@ -3454,12 +3770,33 @@ function escapeHTML(value) {
 
   }
 
+
   return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 
 }
 
@@ -3478,8 +3815,10 @@ function normalizeDateInput(value) {
     return "";
   }
 
+
   const text =
     String(value);
+
 
   if (
     /^\d{4}-\d{2}-\d{2}$/.test(text)
@@ -3489,10 +3828,12 @@ function normalizeDateInput(value) {
 
   }
 
+
   const match =
     text.match(
       /(\d{4})-(\d{2})-(\d{2})/
     );
+
 
   if (match) {
 
@@ -3506,6 +3847,7 @@ function normalizeDateInput(value) {
 
   }
 
+
   return "";
 
 }
@@ -3517,24 +3859,35 @@ function normalizeTimeInput(value) {
     return "";
   }
 
+
   const text =
     String(value);
+
 
   const match =
     text.match(
       /(\d{1,2}):(\d{2})/
     );
 
+
   if (!match) {
     return "";
   }
 
+
   return (
+
     String(
       match[1]
-    ).padStart(2, "0") +
+    ).padStart(
+      2,
+      "0"
+    ) +
+
     ":" +
+
     match[2]
+
   );
 
 }
